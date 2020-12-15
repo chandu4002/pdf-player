@@ -24,6 +24,7 @@ export class ViewerService {
   public src: string;
   public userName: string;
   private metaData: any;
+  identifier: string;
 
   constructor(private sunbirdPdfPlayerService: SunbirdPdfPlayerService,
     private utilService: UtilService) { }
@@ -35,6 +36,7 @@ export class ViewerService {
     this.totalNumberOfPages = 0;
     this.currentPagePointer = (config && config.startFromPage) || 1;
     this.contentName = metadata.name;
+    this.identifier = metadata.identifier;
     if(metadata.isAvailableLocally) {
       const basePath = (metadata.streamingUrl) ? (metadata.streamingUrl) : (metadata.basePath || metadata.baseDir)
       this.src = `${basePath}/${metadata.artifactUrl}`;
@@ -155,5 +157,19 @@ export class ViewerService {
     if (!type) {
     this.sunbirdPdfPlayerService.error(error);
     }
+  }
+
+  raiseExceptionLog(errorCode: String , errorType: String , stacktrace ) {
+    const exceptionLogEvent = {
+      eid: "LOG",
+      edata: {
+          err: errorCode,
+          errtype: errorType,
+          requestid: this.identifier,
+          stacktrace: stacktrace || '',
+      }
+    }
+    this.playerEvent.emit(exceptionLogEvent)
+    this.sunbirdPdfPlayerService.error(stacktrace);
   }
 }

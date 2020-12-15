@@ -63,6 +63,7 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
       const checkContentCompatible = this.contentCompabilityService.checkContentCompatibility(contentCompabilityLevel);
       if (!checkContentCompatible['isCompitable']) {
         this.viewerService.raiseErrorEvent( checkContentCompatible['error'] , 'compatibility-error');
+        this.viewerService.raiseExceptionLog('CP_CONT_COMP_01' , 'content compatibility error', checkContentCompatible['error'] )
       }
     }
     this.viewState = 'start';
@@ -123,6 +124,7 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
   public onPdfLoadFailed(error: Error): void {
     this.viewerService.raiseErrorEvent(error);
     this.viewState = 'player';
+    this.viewerService.raiseExceptionLog('CP_CONT_lOAD_FAIL_11' , 'content load failed', error );
   }
 
   public onZoomChange(event: any): void {
