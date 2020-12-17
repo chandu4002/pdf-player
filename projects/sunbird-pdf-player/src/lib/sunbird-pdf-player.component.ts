@@ -12,7 +12,7 @@ import { Config, PlayerConfig } from './playerInterfaces';
 import { ViewerService } from './services/viewer.service';
 import { SunbirdPdfPlayerService } from './sunbird-pdf-player.service';
 import * as _ from 'lodash';
-import { ContentCompabilityService } from '@project-sunbird/sunbird-player-sdk';
+import { ContentCompabilityService, errorCode , errorMessage } from '@project-sunbird/sunbird-player-sdk';
 @Component({
   selector: 'sunbird-pdf-player',
   templateUrl: './sunbird-pdf-player.component.html',
@@ -33,6 +33,7 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
   };
   @Input() playerConfig: PlayerConfig;
   @Input() action: string;
+  @Input() traceId?: string;
   @Output() playerEvent: EventEmitter<object>;
   @Output() telemetryEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() viewerActions: EventEmitter<any> = new EventEmitter<any>();
@@ -63,7 +64,7 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
       const checkContentCompatible = this.contentCompabilityService.checkContentCompatibility(contentCompabilityLevel);
       if (!checkContentCompatible['isCompitable']) {
         this.viewerService.raiseErrorEvent( checkContentCompatible['error'] , 'compatibility-error');
-        this.viewerService.raiseExceptionLog('CP_CONT_COMP_01' , 'content compatibility error', checkContentCompatible['error'] )
+        this.viewerService.raiseExceptionLog( errorCode.contentCompatibility , errorMessage.contentCompatibility, checkContentCompatible['error'], this.traceId)
       }
     }
     this.viewState = 'start';
@@ -124,7 +125,7 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
   public onPdfLoadFailed(error: Error): void {
     this.viewerService.raiseErrorEvent(error);
     this.viewState = 'player';
-    this.viewerService.raiseExceptionLog('CP_CONT_lOAD_FAIL_11' , 'content load failed', error );
+    this.viewerService.raiseExceptionLog(errorCode.contentLoadFails , errorMessage.contentLoadFails, error , this.traceId);
   }
 
   public onZoomChange(event: any): void {
