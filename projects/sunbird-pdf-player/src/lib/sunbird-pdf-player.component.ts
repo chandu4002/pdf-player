@@ -24,6 +24,7 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
   private subscription;
   public viewState = 'start';
   public showControls = true;
+  public traceId: string;
   @ViewChild('pdfPlayer') pdfPlayerRef: ElementRef;
   sideMenuConfig = {
     showShare: true,
@@ -33,7 +34,6 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
   };
   @Input() playerConfig: PlayerConfig;
   @Input() action: string;
-  @Input() traceId?: string;
   @Output() playerEvent: EventEmitter<object>;
   @Output() telemetryEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() viewerActions: EventEmitter<any> = new EventEmitter<any>();
@@ -67,6 +67,7 @@ export class SunbirdPdfPlayerComponent implements OnInit, OnDestroy, OnChanges, 
         this.viewerService.raiseExceptionLog( errorCode.contentCompatibility , errorMessage.contentCompatibility, checkContentCompatible['error'], this.traceId)
       }
     }
+    this.traceId = this.playerConfig.metadata.traceId;
     this.viewState = 'start';
     this.pdfConfig = { ...this.viewerService.defaultConfig, ...this.playerConfig.config };
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
